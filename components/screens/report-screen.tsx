@@ -193,9 +193,9 @@ export function ReportScreen({ onNavigate, onBack }: ReportScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="relative min-h-screen bg-white pb-24 md:pb-28">
       {/* Header */}
-      <div className="sticky top-0 bg-white z-10 px-4 pt-12 pb-4 border-b border-border">
+      <div className="sticky top-0 bg-white z-10 px-4 pt-12 pb-4 border-b border-border md:px-8 md:pt-8">
         <div className="flex items-center gap-4">
           <button onClick={onBack} className="p-2 -ml-2 hover:bg-secondary rounded-full">
             <ArrowLeft className="w-6 h-6 text-paws-dark" />
@@ -229,14 +229,14 @@ export function ReportScreen({ onNavigate, onBack }: ReportScreenProps) {
       </div>
 
       {/* Form */}
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 md:p-8">
         {/* Photo Upload */}
         <div>
           <label className="block text-sm font-medium text-paws-dark mb-2">Foto de la mascota</label>
           <label className="block border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center bg-secondary/30 hover:border-primary/50 transition-colors cursor-pointer">
             {image ? (
               <div className="relative w-full">
-                <img src={image} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
+                <img src={image} alt="Preview" className="w-full h-40 object-cover rounded-lg md:h-56" />
                 <button
                   type="button"
                   onClick={(e) => {
@@ -403,7 +403,7 @@ export function ReportScreen({ onNavigate, onBack }: ReportScreenProps) {
               </select>
             </div>
           </div>
-          <div className="h-48 rounded-2xl overflow-hidden border border-border">
+          <div className="h-48 rounded-2xl overflow-hidden border border-border md:h-64">
             {isClient && (
               <MapContainer
                 key={`${markerPosition[0]}-${markerPosition[1]}`}
@@ -459,7 +459,7 @@ export function ReportScreen({ onNavigate, onBack }: ReportScreenProps) {
       </div>
 
       {/* Submit Button */}
-      <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-border">
+      <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-border md:absolute md:bottom-0 md:left-0 md:right-0 md:px-8">
         <Button
           onClick={handleSubmit}
           className="w-full h-14 rounded-2xl bg-primary hover:bg-paws-primary-dark text-white font-semibold text-lg"

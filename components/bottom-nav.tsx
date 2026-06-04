@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, Map, Plus, Users, User } from 'lucide-react'
+import { Home, Map, Plus, Users, User, PawPrint } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export type ScreenName = 
@@ -35,9 +35,51 @@ const navItems = [
   { id: 'profile' as ScreenName, icon: User, label: 'Perfil' },
 ]
 
+export function DesktopNav({ activeTab, onNavigate }: BottomNavProps) {
+  return (
+    <aside className="hidden md:flex fixed inset-y-0 left-0 z-40 w-72 flex-col border-r border-border bg-white px-5 py-6">
+      <button
+        onClick={() => onNavigate('dashboard')}
+        className="mb-8 flex items-center gap-3 rounded-xl px-2 py-1 text-left"
+      >
+        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white">
+          <PawPrint className="h-6 w-6" />
+        </span>
+        <span>
+          <span className="block text-lg font-semibold text-paws-dark">PawsConnect</span>
+          <span className="block text-xs text-muted-foreground">Costa Rica</span>
+        </span>
+      </button>
+
+      <nav className="space-y-2">
+        {navItems.map((item) => {
+          const Icon = item.icon
+          const isActive = activeTab === item.id
+
+          return (
+            <button
+              key={item.id}
+              onClick={() => onNavigate(item.id)}
+              className={cn(
+                'flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors',
+                isActive
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-paws-dark'
+              )}
+            >
+              <Icon className="h-5 w-5" />
+              <span>{item.label}</span>
+            </button>
+          )
+        })}
+      </nav>
+    </aside>
+  )
+}
+
 export function BottomNav({ activeTab, onNavigate }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-border px-4 pb-safe z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-border px-4 pb-safe z-50 md:hidden">
       <div className="flex items-center justify-around h-16 max-w-md mx-auto">
         {navItems.map((item) => {
           const isActive = activeTab === item.id

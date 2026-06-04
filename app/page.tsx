@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { AppProvider } from '@/lib/app-context'
-import { BottomNav, type ScreenName } from '@/components/bottom-nav'
+import { BottomNav, DesktopNav, type ScreenName } from '@/components/bottom-nav'
 import { LoginScreen } from '@/components/screens/login-screen'
 import { OnboardingScreen } from '@/components/screens/onboarding-screen'
 import { DashboardScreen } from '@/components/screens/dashboard-screen'
@@ -46,6 +46,7 @@ function PawsConnectApp() {
   // Screens without bottom nav
   const screensWithoutNav: ScreenName[] = ['login', 'onboarding', 'editProfile', 'editPet']
   const showBottomNav = !screensWithoutNav.includes(currentScreen)
+  const isMapScreen = currentScreen === 'map'
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -116,8 +117,29 @@ function PawsConnectApp() {
   }
 
   return (
-    <div className="min-h-screen bg-background max-w-md mx-auto relative shadow-2xl">
-      {renderScreen()}
+    <div className="min-h-screen bg-background">
+      {showBottomNav && (
+        <DesktopNav activeTab={currentScreen} onNavigate={navigateTo} />
+      )}
+      <main
+        className={
+          showBottomNav
+            ? `min-h-screen md:pl-72 ${isMapScreen ? '' : 'md:px-8 md:py-8'}`
+            : 'min-h-screen'
+        }
+      >
+        <div
+          className={
+            showBottomNav
+              ? isMapScreen
+                ? 'min-h-screen max-w-md mx-auto bg-background shadow-2xl md:max-w-none md:shadow-none'
+                : 'min-h-screen max-w-md mx-auto bg-background shadow-2xl md:max-w-6xl md:rounded-2xl md:shadow-sm md:border md:border-border md:overflow-hidden'
+              : 'min-h-screen max-w-md mx-auto bg-background shadow-2xl'
+          }
+        >
+          {renderScreen()}
+        </div>
+      </main>
       {showBottomNav && (
         <BottomNav activeTab={currentScreen} onNavigate={navigateTo} />
       )}

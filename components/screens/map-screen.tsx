@@ -134,9 +134,9 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative md:h-screen md:min-h-0">
       {/* Map Container */}
-      <div className="h-screen w-full">
+      <div className="h-screen w-full md:h-full">
         {isClient && (
           <MapContainer
             key={`${mapCenter[0]}-${mapCenter[1]}`}
@@ -206,7 +206,7 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
       </div>
 
       {/* Search Bar Overlay */}
-      <div className="absolute top-12 left-4 right-4 z-10">
+      <div className="absolute top-12 left-4 right-4 z-10 md:left-6 md:right-auto md:top-6 md:w-[420px]">
         <button 
           onClick={() => onNavigate('search')}
           className="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-lg text-muted-foreground"
@@ -217,8 +217,8 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
       </div>
 
       {/* Filter Chips */}
-      <div className="absolute top-28 left-0 right-0 z-10 px-4">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+      <div className="absolute top-28 left-0 right-0 z-10 px-4 md:left-6 md:right-auto md:top-24 md:w-[420px] md:px-0">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:flex-wrap md:overflow-visible">
           {filters.map((f) => (
             <button
               key={f.id}
@@ -237,13 +237,13 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
 
       <button
         onClick={requestUserLocation}
-        className="absolute top-[10.5rem] right-4 z-10 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-paws-dark shadow-lg hover:bg-secondary transition-colors"
+        className="absolute top-[10.5rem] right-4 z-10 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-paws-dark shadow-lg hover:bg-secondary transition-colors md:top-6 md:right-6"
       >
         <LocateFixed className={`w-4 h-4 text-primary ${isLocating ? 'animate-spin' : ''}`} />
         {isLocating ? 'Ubicando' : 'Mi ubicacion'}
       </button>
 
-      <div className="absolute top-[13.5rem] left-4 right-4 z-10 grid grid-cols-3 gap-2">
+      <div className="absolute top-[13.5rem] left-4 right-4 z-10 grid grid-cols-3 gap-2 md:left-6 md:right-auto md:top-40 md:w-[420px]">
         <select
           value={selectedProvince}
           onChange={(event) => handleProvinceChange(event.target.value)}
@@ -285,7 +285,7 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
       </div>
 
       {/* Legend */}
-      <div className="absolute bottom-40 right-4 z-10 bg-white rounded-xl shadow-lg p-3 space-y-2">
+      <div className="absolute bottom-40 right-4 z-10 bg-white rounded-xl shadow-lg p-3 space-y-2 md:bottom-6 md:left-6 md:right-auto">
         <div className="flex items-center gap-2 text-xs">
           <div className="w-3 h-3 rounded-full bg-paws-urgent" />
           <span className="text-muted-foreground">Perdido</span>
@@ -302,7 +302,7 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
 
       {/* Bottom Sheet */}
       <div 
-        className={`absolute bottom-16 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-10 transition-transform duration-300 ${
+        className={`absolute bottom-16 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-10 transition-transform duration-300 md:bottom-6 md:left-auto md:right-6 md:w-[390px] md:rounded-2xl ${
           isBottomSheetOpen ? 'translate-y-0' : 'translate-y-[calc(100%-60px)]'
         }`}
       >
@@ -314,7 +314,7 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
           <div className="w-10 h-1 bg-border rounded-full" />
         </button>
 
-        <div className="px-4 pb-6 max-h-[300px] overflow-y-auto">
+        <div className="px-4 pb-6 max-h-[300px] overflow-y-auto md:max-h-[calc(100vh-180px)]">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-paws-dark">Avistamientos cercanos</h3>
             <button onClick={() => setIsBottomSheetOpen(!isBottomSheetOpen)}>

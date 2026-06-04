@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, Bell, MapPin, ChevronRight } from 'lucide-react'
+import { Search, Bell, MapPin } from 'lucide-react'
 import { useApp } from '@/lib/app-context'
 import type { ScreenName } from '@/components/bottom-nav'
 
@@ -15,9 +15,9 @@ export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
   const recentAlerts = pets.slice(0, 3)
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24 md:pb-8">
       {/* Header */}
-      <div className="bg-white px-4 pt-12 pb-4 shadow-sm">
+      <div className="bg-white px-4 pt-12 pb-4 shadow-sm md:px-8 md:pt-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <img
@@ -50,8 +50,8 @@ export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
       </div>
 
       {/* Stats Row */}
-      <div className="px-4 py-4">
-        <div className="grid grid-cols-3 gap-3">
+      <div className="px-4 py-4 md:px-8">
+        <div className="grid grid-cols-3 gap-3 md:gap-4">
           <StatCard 
             icon={<div className="w-8 h-8 rounded-full bg-paws-active/20 flex items-center justify-center"><span className="text-paws-active font-bold">{pets.filter(p => p.status === 'lost').length}</span></div>}
             label="Perdidas"
@@ -71,12 +71,12 @@ export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
       </div>
 
       {/* Recent Alerts Section */}
-      <section className="px-4 mb-6">
+      <section className="px-4 mb-6 md:px-8">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-paws-dark">Alertas recientes</h3>
           <button className="text-sm text-primary font-medium">Ver todas</button>
         </div>
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 md:grid md:grid-cols-2 md:overflow-visible md:mx-0 md:px-0 lg:grid-cols-3">
           {recentAlerts.map((pet) => (
             <AlertCard 
               key={pet.id} 
@@ -88,7 +88,7 @@ export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
       </section>
 
       {/* Nearby Pets Section */}
-      <section className="px-4">
+      <section className="px-4 md:px-8">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-paws-dark">Mascotas cercanas</h3>
           <button 
@@ -98,8 +98,8 @@ export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
             Ver mapa
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-3 stagger-children">
-          {nearbyPets.slice(0, 4).map((pet) => (
+        <div className="grid grid-cols-2 gap-3 stagger-children md:grid-cols-3 lg:grid-cols-4">
+          {nearbyPets.map((pet) => (
             <PetCard 
               key={pet.id} 
               pet={pet} 
@@ -114,7 +114,7 @@ export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
 
 function StatCard({ icon, label, color }: { icon: React.ReactNode; label: string; color: string }) {
   return (
-    <div className="bg-white rounded-xl p-3 shadow-sm border border-border flex flex-col items-center gap-2">
+    <div className="bg-white rounded-xl p-3 shadow-sm border border-border flex flex-col items-center gap-2 md:p-4">
       {icon}
       <span className="text-xs text-center text-muted-foreground">{label}</span>
     </div>
@@ -125,7 +125,7 @@ function AlertCard({ pet, onClick }: { pet: any; onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
-      className="flex-shrink-0 w-72 bg-white rounded-2xl p-3 shadow-sm border border-border flex items-center gap-3 hover:border-primary transition-colors"
+      className="flex-shrink-0 w-72 bg-white rounded-2xl p-3 shadow-sm border border-border flex items-center gap-3 hover:border-primary transition-colors md:w-full"
     >
       <img
         src={pet.image}
@@ -169,7 +169,7 @@ function PetCard({ pet, onClick }: { pet: any; onClick: () => void }) {
         <img
           src={pet.image}
           alt={pet.name}
-          className="w-full h-32 object-cover"
+          className="w-full h-32 object-cover md:h-40"
         />
         <span className={`absolute top-2 right-2 px-2 py-0.5 text-xs font-semibold rounded-full ${statusColors[pet.status] || 'bg-gray-400 text-white'}`}>
           {statusLabels[pet.status] || 'Info'}

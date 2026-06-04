@@ -128,9 +128,9 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="relative min-h-screen bg-white pb-24 md:pb-28">
       {/* Header */}
-      <div className="sticky top-0 bg-white z-10 px-4 pt-12 pb-4 border-b border-border">
+      <div className="sticky top-0 bg-white z-10 px-4 pt-12 pb-4 border-b border-border md:px-8 md:pt-8">
         <div className="flex items-center gap-4">
           <button onClick={onBack} className="p-2 -ml-2 hover:bg-secondary rounded-full">
             <ArrowLeft className="w-6 h-6 text-paws-dark" />
@@ -158,13 +158,13 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
       </div>
 
       {/* Filters */}
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 md:p-8">
         {/* Report Type */}
         <div>
           <label className="block text-sm font-medium text-paws-dark mb-3">
             Tipo de reporte
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedReportType(selectedReportType === 'perdido' ? null : 'perdido')}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-colors ${
@@ -261,7 +261,7 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
           {locationError && (
             <p className="mb-2 text-xs text-paws-urgent">{locationError}</p>
           )}
-          <div className="mb-3 grid gap-2">
+          <div className="mb-3 grid gap-2 md:grid-cols-3">
             <select
               value={selectedProvince}
               onChange={(event) => handleProvinceChange(event.target.value)}
@@ -370,7 +370,7 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
       </div>
 
       {/* Action Buttons */}
-      <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-border flex gap-3">
+      <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-border flex gap-3 md:absolute md:bottom-0 md:left-0 md:right-0 md:px-8">
         <Button
           onClick={handleApply}
           className="flex-1 h-12 rounded-xl bg-primary hover:bg-paws-primary-dark text-white font-semibold"

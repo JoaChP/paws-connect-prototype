@@ -1,7 +1,8 @@
 'use client'
 
 import { ArrowLeft, Bot, ChevronRight } from 'lucide-react'
-import { mockAIMatches } from '@/lib/mock-data'
+import { findMatches } from '@/lib/matching'
+import { useApp } from '@/lib/app-context'
 import type { ScreenName } from '@/components/bottom-nav'
 
 interface AIMatchListScreenProps {
@@ -10,6 +11,8 @@ interface AIMatchListScreenProps {
 }
 
 export function AIMatchListScreen({ onNavigate, onBack }: AIMatchListScreenProps) {
+  const { pets } = useApp()
+  const matches = findMatches(pets)
   const getMatchColor = (percentage: number) => {
     if (percentage >= 85) return 'bg-primary text-white'
     if (percentage >= 70) return 'bg-paws-alert text-white'
@@ -21,19 +24,28 @@ export function AIMatchListScreen({ onNavigate, onBack }: AIMatchListScreenProps
       {/* Header */}
       <div className="sticky top-0 bg-white z-10 px-4 pt-12 pb-4 border-b border-border">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 -ml-2 hover:bg-secondary rounded-full">
+          <button
+            aria-label="Volver"
+            onClick={onBack}
+            className="p-2 -ml-2 hover:bg-secondary rounded-full"
+          >
             <ArrowLeft className="w-6 h-6 text-paws-dark" />
           </button>
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-primary" />
-            <h1 className="text-xl font-semibold text-paws-dark">Coincidencias IA</h1>
+            <h1 className="text-xl font-semibold text-paws-dark">Posibles coincidencias</h1>
           </div>
         </div>
       </div>
 
       {/* Match List */}
       <div className="p-4 space-y-3 stagger-children">
-        {mockAIMatches.map((match) => (
+        {matches.length === 0 && (
+          <p className="rounded-2xl border border-dashed p-10 text-center text-sm text-muted-foreground">
+            Aún no hay coincidencias suficientes entre reportes perdidos y encontrados.
+          </p>
+        )}
+        {matches.map((match) => (
           <button
             key={match.id}
             onClick={() => onNavigate('aiMatch', { matchId: match.id })}
@@ -57,7 +69,9 @@ export function AIMatchListScreen({ onNavigate, onBack }: AIMatchListScreenProps
               {/* Info */}
               <div className="flex-1 ml-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getMatchColor(match.matchPercentage)}`}>
+                  <span
+                    className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getMatchColor(match.matchPercentage)}`}
+                  >
                     {match.matchPercentage}% coincidencia
                   </span>
                 </div>
@@ -74,8 +88,8 @@ export function AIMatchListScreen({ onNavigate, onBack }: AIMatchListScreenProps
                 <span
                   key={index}
                   className={`text-xs px-2 py-1 rounded-full ${
-                    feature.match 
-                      ? 'bg-primary/10 text-primary' 
+                    feature.match
+                      ? 'bg-primary/10 text-primary'
                       : 'bg-paws-alert/10 text-paws-alert'
                   }`}
                 >
@@ -92,11 +106,11 @@ export function AIMatchListScreen({ onNavigate, onBack }: AIMatchListScreenProps
         <div className="flex items-start gap-3">
           <Bot className="w-6 h-6 text-paws-info flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-medium text-paws-dark">Como funciona la IA?</p>
+            <p className="font-medium text-paws-dark">¿Cómo se calcula?</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Nuestro sistema analiza caracteristicas visuales como color, tamaño, 
-              raza y marcas distintivas para encontrar posibles coincidencias entre 
-              mascotas perdidas y encontradas.
+              Comparamos especie, raza, color y tamaño declarados, y la distancia entre reportes. El
+              porcentaje es una puntuación de similitud, no una probabilidad ni un análisis de
+              imágenes. Verifica cada caso con la persona responsable.
             </p>
           </div>
         </div>

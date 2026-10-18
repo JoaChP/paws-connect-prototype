@@ -9,12 +9,12 @@ interface ProfileScreenProps {
 }
 
 export function ProfileScreen({ onNavigate }: ProfileScreenProps) {
-  const { user, registeredPets } = useApp()
+  const { user, registeredPets, pets, logout } = useApp()
 
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <div className="bg-[#22C55E] px-4 pt-12 pb-20 relative overflow-hidden">
+      <div className="bg-[#276749] px-4 pt-12 pb-20 relative overflow-hidden">
         {/* Decorative Elements */}
         <div className="absolute top-4 right-4 opacity-20">
           <PawPrint className="w-24 h-24 text-white rotate-[-15deg]" />
@@ -25,7 +25,8 @@ export function ProfileScreen({ onNavigate }: ProfileScreenProps) {
 
         <div className="flex items-center justify-between relative z-10">
           <h1 className="text-xl font-semibold text-white">Mi Perfil</h1>
-          <button 
+          <button
+            aria-label="Editar perfil"
             onClick={() => onNavigate('editProfile')}
             className="p-2 hover:bg-white/10 rounded-full"
           >
@@ -89,7 +90,7 @@ export function ProfileScreen({ onNavigate }: ProfileScreenProps) {
       <section className="px-4 mt-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-paws-dark">Mis Mascotas ({registeredPets.length})</h3>
-          <button 
+          <button
             onClick={() => onNavigate('petRegistration')}
             className="text-sm text-primary font-medium"
           >
@@ -97,14 +98,14 @@ export function ProfileScreen({ onNavigate }: ProfileScreenProps) {
           </button>
         </div>
         <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4">
-          {registeredPets.slice(0, 3).map((pet) => (
+          {registeredPets.map((pet) => (
             <button
               key={pet.id}
               onClick={() => onNavigate('editPet', { petId: pet.id })}
               className="flex-shrink-0 w-32 bg-white rounded-2xl overflow-hidden shadow-sm border border-border"
             >
               <img
-                src={pet.image}
+                src={pet.image || '/pet-placeholder.svg'}
                 alt={pet.name}
                 className="w-full h-24 object-cover"
               />
@@ -114,7 +115,7 @@ export function ProfileScreen({ onNavigate }: ProfileScreenProps) {
               </div>
             </button>
           ))}
-          <button 
+          <button
             onClick={() => onNavigate('petRegistration')}
             className="flex-shrink-0 w-32 h-[136px] bg-secondary rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-border hover:border-primary transition-colors"
           >
@@ -145,18 +146,48 @@ export function ProfileScreen({ onNavigate }: ProfileScreenProps) {
         </div>
       </section>
 
+      <section className="px-4 mt-6">
+        <h3 className="font-semibold mb-3">Mis reportes</h3>
+        {pets
+          .filter((p) => p.ownerId === user.id)
+          .map((p) => (
+            <button
+              key={p.id}
+              onClick={() => onNavigate('petDetail', { petId: p.id })}
+              className="mb-2 flex w-full justify-between rounded-xl border bg-white p-4"
+            >
+              <span>{p.name}</span>
+              <span className="text-sm text-primary">
+                {p.resolvedAt ? 'Resuelto' : 'Ver reporte'} →
+              </span>
+            </button>
+          ))}
+        <button
+          className="mt-4 text-sm text-red-700"
+          onClick={async () => {
+            try {
+              await logout()
+              onNavigate('dashboard')
+            } catch {
+              /* Retry available. */
+            }
+          }}
+        >
+          Cerrar sesión
+        </button>
+      </section>
       {/* Quick Actions */}
       <section className="px-4 mt-6">
         <h3 className="font-semibold text-paws-dark mb-3">Acciones rapidas</h3>
         <div className="grid grid-cols-2 gap-3">
-          <button 
+          <button
             onClick={() => onNavigate('notifications')}
             className="bg-white rounded-xl p-4 shadow-sm border border-border text-left hover:border-primary transition-colors"
           >
             <p className="font-medium text-paws-dark">Notificaciones</p>
             <p className="text-xs text-muted-foreground mt-1">Ver alertas recientes</p>
           </button>
-          <button 
+          <button
             onClick={() => onNavigate('shelters')}
             className="bg-white rounded-xl p-4 shadow-sm border border-border text-left hover:border-primary transition-colors"
           >

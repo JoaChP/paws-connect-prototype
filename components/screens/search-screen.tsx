@@ -5,7 +5,12 @@ import { ArrowLeft, Search, X, PawPrint, Dog, Cat, LocateFixed } from 'lucide-re
 import { Button } from '@/components/ui/button'
 import type { ScreenName } from '@/components/bottom-nav'
 import { useApp } from '@/lib/app-context'
-import { costaRicaLocations, findCanton, findDistrict, findProvince } from '@/lib/costa-rica-locations'
+import {
+  costaRicaLocations,
+  findCanton,
+  findDistrict,
+  findProvince,
+} from '@/lib/costa-rica-locations'
 
 interface SearchScreenProps {
   onNavigate: (screen: ScreenName) => void
@@ -50,7 +55,8 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
   const [selectedDistrict, setSelectedDistrict] = useState('')
 
   const selectedProvinceOption = selectedProvince ? findProvince(selectedProvince) : null
-  const selectedCantonOption = selectedProvince && selectedCanton ? findCanton(selectedProvince, selectedCanton) : null
+  const selectedCantonOption =
+    selectedProvince && selectedCanton ? findCanton(selectedProvince, selectedCanton) : null
 
   const handleApply = () => {
     const reportTypeMap = {
@@ -132,7 +138,11 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
       {/* Header */}
       <div className="sticky top-0 bg-white z-10 px-4 pt-12 pb-4 border-b border-border md:px-8 md:pt-8">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 -ml-2 hover:bg-secondary rounded-full">
+          <button
+            aria-label="Volver"
+            onClick={onBack}
+            className="p-2 -ml-2 hover:bg-secondary rounded-full"
+          >
             <ArrowLeft className="w-6 h-6 text-paws-dark" />
           </button>
           <div className="flex-1 relative">
@@ -146,7 +156,7 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
               autoFocus
             />
             {searchQuery && (
-              <button 
+              <button
                 onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2"
               >
@@ -161,41 +171,51 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
       <div className="p-4 space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 md:p-8">
         {/* Report Type */}
         <div>
-          <label className="block text-sm font-medium text-paws-dark mb-3">
-            Tipo de reporte
-          </label>
+          <label className="block text-sm font-medium text-paws-dark mb-3">Tipo de reporte</label>
           <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => setSelectedReportType(selectedReportType === 'perdido' ? null : 'perdido')}
+              onClick={() =>
+                setSelectedReportType(selectedReportType === 'perdido' ? null : 'perdido')
+              }
               className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-colors ${
                 selectedReportType === 'perdido'
                   ? 'bg-paws-urgent text-white'
                   : 'bg-secondary text-muted-foreground'
               }`}
             >
-              <div className={`w-3 h-3 rounded-full ${selectedReportType === 'perdido' ? 'bg-white' : 'bg-paws-urgent'}`} />
+              <div
+                className={`w-3 h-3 rounded-full ${selectedReportType === 'perdido' ? 'bg-white' : 'bg-paws-urgent'}`}
+              />
               Perdido
             </button>
             <button
-              onClick={() => setSelectedReportType(selectedReportType === 'encontrado' ? null : 'encontrado')}
+              onClick={() =>
+                setSelectedReportType(selectedReportType === 'encontrado' ? null : 'encontrado')
+              }
               className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-colors ${
                 selectedReportType === 'encontrado'
                   ? 'bg-primary text-white'
                   : 'bg-secondary text-muted-foreground'
               }`}
             >
-              <div className={`w-3 h-3 rounded-full ${selectedReportType === 'encontrado' ? 'bg-white' : 'bg-primary'}`} />
+              <div
+                className={`w-3 h-3 rounded-full ${selectedReportType === 'encontrado' ? 'bg-white' : 'bg-primary'}`}
+              />
               Encontrado
             </button>
             <button
-              onClick={() => setSelectedReportType(selectedReportType === 'adopcion' ? null : 'adopcion')}
+              onClick={() =>
+                setSelectedReportType(selectedReportType === 'adopcion' ? null : 'adopcion')
+              }
               className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-colors ${
                 selectedReportType === 'adopcion'
                   ? 'bg-paws-info text-white'
                   : 'bg-secondary text-muted-foreground'
               }`}
             >
-              <PawPrint className={`w-4 h-4 ${selectedReportType === 'adopcion' ? 'text-white' : 'text-paws-info'}`} />
+              <PawPrint
+                className={`w-4 h-4 ${selectedReportType === 'adopcion' ? 'text-white' : 'text-paws-info'}`}
+              />
               Adopcion
             </button>
           </div>
@@ -203,9 +223,7 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
 
         {/* Animal Type */}
         <div>
-          <label className="block text-sm font-medium text-paws-dark mb-3">
-            Tipo de animal
-          </label>
+          <label className="block text-sm font-medium text-paws-dark mb-3">Tipo de animal</label>
           <div className="flex gap-2">
             <button
               onClick={() => setSelectedAnimalType(selectedAnimalType === 'perro' ? null : 'perro')}
@@ -246,9 +264,7 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
         {/* Radius */}
         <div>
           <div className="mb-3 flex items-center justify-between gap-3">
-            <label className="block text-sm font-medium text-paws-dark">
-              Radio de busqueda
-            </label>
+            <label className="block text-sm font-medium text-paws-dark">Radio de busqueda</label>
             <button
               onClick={handleUseLocation}
               disabled={isLocating}
@@ -258,9 +274,7 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
               {isLocating ? 'Ubicando' : userLocation ? 'Ubicacion activa' : 'Mi ubicacion'}
             </button>
           </div>
-          {locationError && (
-            <p className="mb-2 text-xs text-paws-urgent">{locationError}</p>
-          )}
+          {locationError && <p className="mb-2 text-xs text-paws-urgent">{locationError}</p>}
           <div className="mb-3 grid gap-2 md:grid-cols-3">
             <select
               value={selectedProvince}
@@ -320,23 +334,19 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
 
         {/* Color */}
         <div>
-          <label className="block text-sm font-medium text-paws-dark mb-3">
-            Color
-          </label>
+          <label className="block text-sm font-medium text-paws-dark mb-3">Color</label>
           <div className="flex flex-wrap gap-2">
             {colors.map((c) => (
               <button
                 key={c.id}
                 onClick={() => setSelectedColor(selectedColor === c.id ? null : c.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
-                  selectedColor === c.id
-                    ? 'border-primary ring-2 ring-primary/20'
-                    : 'border-border'
+                  selectedColor === c.id ? 'border-primary ring-2 ring-primary/20' : 'border-border'
                 }`}
               >
                 <div
                   className="w-5 h-5 rounded-full border border-border"
-                  style={{ 
+                  style={{
                     background: c.color.includes('gradient') ? c.color : c.color,
                   }}
                 />
@@ -348,9 +358,7 @@ export function SearchScreen({ onNavigate, onBack }: SearchScreenProps) {
 
         {/* Size */}
         <div>
-          <label className="block text-sm font-medium text-paws-dark mb-3">
-            Tamano
-          </label>
+          <label className="block text-sm font-medium text-paws-dark mb-3">Tamano</label>
           <div className="flex gap-2">
             {(['pequeno', 'mediano', 'grande'] as const).map((size) => (
               <button

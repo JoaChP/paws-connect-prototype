@@ -1,61 +1,62 @@
-"use client"
+'use client'
 
-import { useRef, useState, useCallback } from "react"
-import { Camera, X, RotateCcw } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useRef, useState, useCallback } from 'react'
+import { prepareImage } from '@/lib/images'
+import { toast } from 'sonner'
+import { Camera, X, RotateCcw } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface ImageUploaderProps {
   value?: string
   onChange: (imageUrl: string) => void
   className?: string
-  aspectRatio?: "square" | "landscape" | "portrait"
+  aspectRatio?: 'square' | 'landscape' | 'portrait'
   placeholder?: string
 }
 
 export function ImageUploader({
   value,
   onChange,
-  className = "",
-  aspectRatio = "square",
-  placeholder = "Subir foto",
+  className = '',
+  aspectRatio = 'square',
+  placeholder = 'Subir foto',
 }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const aspectClasses = {
-    square: "aspect-square",
-    landscape: "aspect-video",
-    portrait: "aspect-[3/4]",
+    square: 'aspect-square',
+    landscape: 'aspect-video',
+    portrait: 'aspect-[3/4]',
   }
 
-  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
 
-    setIsLoading(true)
+      setIsLoading(true)
 
-    // Convert to base64 for local storage
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const base64 = reader.result as string
-      onChange(base64)
-      setIsLoading(false)
-    }
-    reader.onerror = () => {
-      setIsLoading(false)
-    }
-    reader.readAsDataURL(file)
+      try {
+        onChange(await prepareImage(file))
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : 'No pudimos cargar la imagen')
+      } finally {
+        setIsLoading(false)
+      }
 
-    // Reset input
-    if (inputRef.current) {
-      inputRef.current.value = ""
-    }
-  }, [onChange])
+      // Reset input
+      if (inputRef.current) {
+        inputRef.current.value = ''
+      }
+    },
+    [onChange],
+  )
 
   const handleRemove = useCallback(() => {
-    onChange("")
+    onChange('')
     if (inputRef.current) {
-      inputRef.current.value = ""
+      inputRef.current.value = ''
     }
   }, [onChange])
 
@@ -64,18 +65,14 @@ export function ImageUploader({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         onChange={handleFileChange}
         className="hidden"
       />
-      
+
       {value ? (
         <div className="relative w-full h-full rounded-xl overflow-hidden bg-muted">
-          <img
-            src={value}
-            alt="Preview"
-            className="w-full h-full object-cover"
-          />
+          <img src={value} alt="Preview" className="w-full h-full object-cover" />
           <div className="absolute top-2 right-2 flex gap-2">
             <Button
               size="icon"

@@ -5,21 +5,22 @@ import { Toaster } from '@/components/ui/sonner'
 import 'leaflet/dist/leaflet.css'
 import './globals.css'
 
-const poppins = Poppins({ 
-  subsets: ["latin"],
+const poppins = Poppins({
+  subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-poppins'
+  variable: '--font-poppins',
 })
 
-const geistMono = Geist_Mono({ 
-  subsets: ["latin"],
-  variable: '--font-geist-mono'
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-geist-mono',
 })
 
 export const metadata: Metadata = {
   title: 'PawsConnect - Encuentra a tu mascota',
-  description: 'Plataforma colaborativa con IA para recuperar mascotas perdidas en Costa Rica y Latinoamérica',
-  generator: 'v0.app',
+  description:
+    'Comunidad para encontrar mascotas perdidas en Costa Rica. Reportes geolocalizados, coincidencias por características y colaboración.',
+
   icons: {
     icon: [
       {
@@ -43,8 +44,6 @@ export const viewport: Viewport = {
   themeColor: '#22C55E',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 }
 
 export default function RootLayout({
@@ -54,7 +53,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="bg-background">
-      <body className={`${poppins.variable} ${geistMono.variable} font-sans antialiased pb-20`}>
+      <body className={`${poppins.variable} ${geistMono.variable} font-sans antialiased`}>
         {children}
         <Toaster />
         {process.env.NODE_ENV === 'production' && <Analytics />}

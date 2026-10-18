@@ -2,7 +2,8 @@
 
 import { ArrowLeft, Check, X, AlertTriangle, Bot } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { mockAIMatches } from '@/lib/mock-data'
+import { findMatches } from '@/lib/matching'
+import { useApp } from '@/lib/app-context'
 import type { ScreenName } from '@/components/bottom-nav'
 
 interface AIMatchScreenProps {
@@ -12,28 +13,41 @@ interface AIMatchScreenProps {
 }
 
 export function AIMatchScreen({ matchId, onNavigate, onBack }: AIMatchScreenProps) {
-  const match = mockAIMatches.find((m) => m.id === matchId) || mockAIMatches[0]
+  const { pets } = useApp()
+  const match = findMatches(pets).find((m) => m.id === matchId)
 
   const handleConfirm = () => {
-    alert('Coincidencia confirmada! El dueño sera notificado.')
-    onNavigate('dashboard')
+    if (match) onNavigate('petDetail', { petId: match.foundPet.id })
   }
 
   const handleDiscard = () => {
     onBack()
   }
 
+  if (!match)
+    return (
+      <div className="p-8">
+        <h1 className="font-semibold">Coincidencia no disponible</h1>
+        <button aria-label="Volver" onClick={onBack} className="mt-4 text-primary">
+          Volver
+        </button>
+      </div>
+    )
   return (
     <div className="min-h-screen bg-white pb-24">
       {/* Header */}
       <div className="sticky top-0 bg-white z-10 px-4 pt-12 pb-4 border-b border-border">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 -ml-2 hover:bg-secondary rounded-full">
+          <button
+            aria-label="Volver"
+            onClick={onBack}
+            className="p-2 -ml-2 hover:bg-secondary rounded-full"
+          >
             <ArrowLeft className="w-6 h-6 text-paws-dark" />
           </button>
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-primary" />
-            <h1 className="text-xl font-semibold text-paws-dark">Coincidencia IA</h1>
+            <h1 className="text-xl font-semibold text-paws-dark">Posible coincidencia</h1>
           </div>
         </div>
       </div>
@@ -90,7 +104,7 @@ export function AIMatchScreen({ matchId, onNavigate, onBack }: AIMatchScreenProp
               </span>
             </div>
             <p className="font-medium text-paws-dark mt-2 text-center">Mascota encontrada</p>
-            <p className="text-sm text-muted-foreground text-center">{match.lostPet.createdAt}</p>
+            <p className="text-sm text-muted-foreground text-center">{match.foundPet.reportedAt}</p>
           </div>
         </div>
 
@@ -101,7 +115,7 @@ export function AIMatchScreen({ matchId, onNavigate, onBack }: AIMatchScreenProp
             <span className="text-sm font-semibold text-primary">{match.matchPercentage}%</span>
           </div>
           <div className="h-3 bg-secondary rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-primary rounded-full transition-all duration-500"
               style={{ width: `${match.matchPercentage}%` }}
             />
@@ -110,18 +124,20 @@ export function AIMatchScreen({ matchId, onNavigate, onBack }: AIMatchScreenProp
 
         {/* Detected Features */}
         <div className="mt-6">
-          <h3 className="font-semibold text-paws-dark mb-4">Caracteristicas detectadas</h3>
+          <h3 className="font-semibold text-paws-dark mb-4">Características comparadas</h3>
           <div className="space-y-3">
             {match.features.map((feature, index) => (
-              <div 
+              <div
                 key={index}
                 className={`flex items-center gap-3 p-3 rounded-xl ${
                   feature.match ? 'bg-primary/10' : 'bg-paws-alert/10'
                 }`}
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  feature.match ? 'bg-primary' : 'bg-paws-alert'
-                }`}>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    feature.match ? 'bg-primary' : 'bg-paws-alert'
+                  }`}
+                >
                   {feature.match ? (
                     <Check className="w-4 h-4 text-white" />
                   ) : (
@@ -129,7 +145,9 @@ export function AIMatchScreen({ matchId, onNavigate, onBack }: AIMatchScreenProp
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className={`font-medium ${feature.match ? 'text-paws-primary-dark' : 'text-paws-alert'}`}>
+                  <p
+                    className={`font-medium ${feature.match ? 'text-paws-primary-dark' : 'text-paws-alert'}`}
+                  >
                     {feature.label}
                   </p>
                   <p className="text-sm text-muted-foreground">{feature.detail}</p>
@@ -141,13 +159,13 @@ export function AIMatchScreen({ matchId, onNavigate, onBack }: AIMatchScreenProp
       </div>
 
       {/* Action Buttons */}
-      <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-border flex gap-3">
+      <div className="fixed bottom-20 left-0 right-0 p-4 md:left-72 md:bottom-0 bg-white border-t border-border flex gap-3">
         <Button
           onClick={handleConfirm}
           className="flex-1 h-12 rounded-xl bg-primary hover:bg-paws-primary-dark text-white font-semibold"
         >
           <Check className="w-5 h-5 mr-2" />
-          Confirmar coincidencia
+          Ver reporte encontrado
         </Button>
         <Button
           onClick={handleDiscard}

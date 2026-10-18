@@ -12,9 +12,7 @@ import { toast } from 'sonner'
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
   ssr: false,
 })
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), {
-  ssr: false,
-})
+const VectorMapLayer = dynamic(() => import('@/components/vector-map-layer'), { ssr: false })
 const CircleMarker = dynamic(() => import('react-leaflet').then((mod) => mod.CircleMarker), {
   ssr: false,
 })
@@ -155,11 +153,15 @@ export function PetDetailScreen({ petId, onNavigate, onBack }: PetDetailScreenPr
                 zoom={14}
                 className="h-full w-full"
                 zoomControl={false}
+                minZoom={2}
+                maxZoom={19}
+                maxBounds={[
+                  [-85, -Infinity],
+                  [85, Infinity],
+                ]}
+                maxBoundsViscosity={1}
               >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+                <VectorMapLayer />
                 <CircleMarker
                   center={[pet.lat, pet.lng]}
                   radius={10}
@@ -173,6 +175,15 @@ export function PetDetailScreen({ petId, onNavigate, onBack }: PetDetailScreenPr
               </MapContainer>
             )}
           </div>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${pet.lat},${pet.lng}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+          >
+            <MapPin className="h-4 w-4" />
+            Cómo llegar con Google Maps
+          </a>
         </div>
 
         {/* Reporter Info */}

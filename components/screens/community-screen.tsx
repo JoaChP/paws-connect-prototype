@@ -1,7 +1,16 @@
 'use client'
 
+import { shareReport } from '@/lib/share'
 import { useState } from 'react'
-import { Filter, Heart, MessageCircle, Share2, AlertTriangle, PartyPopper, PawPrint } from 'lucide-react'
+import {
+  Filter,
+  Heart,
+  MessageCircle,
+  Share2,
+  AlertTriangle,
+  PartyPopper,
+  PawPrint,
+} from 'lucide-react'
 import { useApp } from '@/lib/app-context'
 import type { ScreenName } from '@/components/bottom-nav'
 
@@ -70,7 +79,11 @@ export function CommunityScreen({ onNavigate }: CommunityScreenProps) {
       <div className="sticky top-0 bg-white z-10 px-4 pt-12 pb-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-semibold text-paws-dark">Comunidad PawsConnect</h1>
-          <button className="p-2 hover:bg-secondary rounded-full">
+          <button
+            aria-label="Restablecer filtros"
+            onClick={() => setFilter('todos')}
+            className="p-2 hover:bg-secondary rounded-full"
+          >
             <Filter className="w-5 h-5 text-paws-dark" />
           </button>
         </div>
@@ -82,9 +95,7 @@ export function CommunityScreen({ onNavigate }: CommunityScreenProps) {
               key={f.id}
               onClick={() => setFilter(f.id)}
               className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                filter === f.id
-                  ? 'bg-primary text-white'
-                  : 'bg-secondary text-muted-foreground'
+                filter === f.id ? 'bg-primary text-white' : 'bg-secondary text-muted-foreground'
               }`}
             >
               {f.label}
@@ -95,6 +106,11 @@ export function CommunityScreen({ onNavigate }: CommunityScreenProps) {
 
       {/* Posts Feed */}
       <div className="p-4 space-y-4 stagger-children">
+        {filteredPosts.length === 0 && (
+          <p className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
+            Aún no hay publicaciones. Cada reporte aparecerá aquí.
+          </p>
+        )}
         {filteredPosts.map((post) => (
           <article
             key={post.id}
@@ -109,16 +125,17 @@ export function CommunityScreen({ onNavigate }: CommunityScreenProps) {
               />
               <div className="flex-1">
                 <p className="font-medium text-paws-dark">{post.userName}</p>
-                <p className="text-xs text-muted-foreground">
-                  {post.createdAt}
-                </p>
+                <p className="text-xs text-muted-foreground">{post.createdAt}</p>
               </div>
               {getPostBadge(post.type)}
             </div>
 
             {/* Image */}
             <img
-              src={post.petImage || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop'}
+              src={
+                post.petImage ||
+                'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop'
+              }
               alt={post.petName || 'mascota'}
               className="w-full h-52 object-cover cursor-pointer"
               onClick={() => post.petId && onNavigate('petDetail', { petId: post.petId })}
@@ -127,10 +144,15 @@ export function CommunityScreen({ onNavigate }: CommunityScreenProps) {
             {/* Content */}
             <div className="p-4">
               <div className="flex items-start gap-2 mb-2">
-                <span className={`mt-1 ${
-                  post.type === 'lost' ? 'text-paws-urgent' : 
-                  post.type === 'found' ? 'text-primary' : 'text-paws-info'
-                }`}>
+                <span
+                  className={`mt-1 ${
+                    post.type === 'lost'
+                      ? 'text-paws-urgent'
+                      : post.type === 'found'
+                        ? 'text-primary'
+                        : 'text-paws-info'
+                  }`}
+                >
                   {getPostIcon(post.type)}
                 </span>
                 <h3 className="font-semibold text-paws-dark">{post.petName || 'Mascota'}</h3>
@@ -139,18 +161,31 @@ export function CommunityScreen({ onNavigate }: CommunityScreenProps) {
 
               {/* Actions */}
               <div className="flex items-center gap-6 mt-4 pt-4 border-t border-border">
-                <button 
+                <button
+                  aria-label={post.liked ? 'Quitar reacción' : 'Apoyar reporte'}
+                  aria-pressed={post.liked}
                   onClick={() => toggleLike(post.id)}
                   className="flex items-center gap-2 text-muted-foreground hover:text-paws-urgent transition-colors"
                 >
-                  <Heart className={`w-5 h-5 ${post.liked ? 'fill-paws-urgent text-paws-urgent' : ''}`} />
+                  <Heart
+                    className={`w-5 h-5 ${post.liked ? 'fill-paws-urgent text-paws-urgent' : ''}`}
+                  />
                   <span className="text-sm">{post.likes}</span>
                 </button>
-                <button className="flex items-center gap-2 text-muted-foreground hover:text-paws-info transition-colors">
+                <button
+                  onClick={() => post.petId && onNavigate('chat', { petId: post.petId })}
+                  aria-label="Ver mensajes del reporte"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-paws-info transition-colors"
+                >
                   <MessageCircle className="w-5 h-5" />
                   <span className="text-sm">{post.comments}</span>
                 </button>
-                <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors ml-auto">
+                <button
+                  onClick={() =>
+                    post.petId && void shareReport(post.petId, post.petName || 'mascota')
+                  }
+                  className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors ml-auto"
+                >
                   <Share2 className="w-5 h-5" />
                   <span className="text-sm">Compartir</span>
                 </button>

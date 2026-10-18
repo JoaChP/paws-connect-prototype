@@ -1,11 +1,13 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { ArrowLeft, Camera, Save } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useApp } from "@/lib/app-context"
-import { ImageUploader } from "@/components/image-uploader"
+import { prepareImage } from '@/lib/images'
+import { toast } from 'sonner'
+import { useState } from 'react'
+import { ArrowLeft, Camera, Save } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useApp } from '@/lib/app-context'
+import { ImageUploader } from '@/components/image-uploader'
 
 interface EditProfileScreenProps {
   onBack: () => void
@@ -13,7 +15,7 @@ interface EditProfileScreenProps {
 
 export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
   const { user, updateUser } = useApp()
-  
+
   const [name, setName] = useState(user.name)
   const [email, setEmail] = useState(user.email)
   const [phone, setPhone] = useState(user.phone)
@@ -24,29 +26,31 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
 
   const handleSave = async () => {
     setIsSaving(true)
-    
-    // Simulate save delay
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    updateUser({
-      name,
-      email,
-      phone,
-      location,
-      bio,
-      avatar,
-    })
-    
-    setIsSaving(false)
-    onBack()
+
+    try {
+      await updateUser({
+        name,
+        email,
+        phone,
+        location,
+        bio,
+        avatar,
+      })
+
+      onBack()
+    } catch {
+      /* Keep unsaved form values. */
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-background pb-8">
       {/* Header */}
-      <div className="bg-[#22C55E] px-4 pt-12 pb-6">
+      <div className="bg-[#276749] px-4 pt-12 pb-6">
         <div className="flex items-center justify-between">
-          <button 
+          <button
             onClick={onBack}
             className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center"
           >
@@ -57,10 +61,10 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
             size="sm"
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-white text-[#22C55E] hover:bg-white/90"
+            className="bg-white text-[#276749] hover:bg-white/90"
           >
             {isSaving ? (
-              <div className="w-4 h-4 border-2 border-[#22C55E] border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[#276749] border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
                 <Save className="w-4 h-4 mr-1" />
@@ -84,21 +88,20 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
                 </div>
               )}
             </div>
-            <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#22C55E] rounded-full flex items-center justify-center cursor-pointer shadow-lg">
+            <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#276749] rounded-full flex items-center justify-center cursor-pointer shadow-lg">
               <Camera className="w-4 h-4 text-white" />
               <input
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={(e) => {
+                onChange={async (e) => {
                   const file = e.target.files?.[0]
-                  if (file) {
-                    const reader = new FileReader()
-                    reader.onloadend = () => {
-                      setAvatar(reader.result as string)
+                  if (file)
+                    try {
+                      setAvatar(await prepareImage(file))
+                    } catch (e) {
+                      toast.error(e instanceof Error ? e.message : 'Imagen no válida')
                     }
-                    reader.readAsDataURL(file)
-                  }
                 }}
               />
             </label>
@@ -112,6 +115,7 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
               Nombre completo
             </label>
             <Input
+              aria-label="Nombre"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Tu nombre"
@@ -125,6 +129,8 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
             </label>
             <Input
               type="email"
+              readOnly
+              aria-label="Correo electrónico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="tu@email.com"
@@ -133,11 +139,10 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-muted-foreground mb-1 block">
-              Teléfono
-            </label>
+            <label className="text-sm font-medium text-muted-foreground mb-1 block">Teléfono</label>
             <Input
               type="tel"
+              aria-label="Teléfono"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+506 8888-1234"
@@ -150,6 +155,7 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
               Ubicación
             </label>
             <Input
+              aria-label="Ubicación"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Ciudad, País"
@@ -162,11 +168,12 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
               Biografía
             </label>
             <textarea
+              aria-label="Biografía"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Cuéntanos sobre ti..."
               rows={3}
-              className="w-full px-3 py-2 rounded-lg bg-muted/50 border border-input text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#22C55E]"
+              className="w-full px-3 py-2 rounded-lg bg-muted/50 border border-input text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#276749]"
             />
           </div>
         </div>

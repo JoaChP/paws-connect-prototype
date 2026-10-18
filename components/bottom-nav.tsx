@@ -3,13 +3,13 @@
 import { Home, Map, Plus, Users, User, PawPrint } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-export type ScreenName = 
-  | 'login' 
-  | 'onboarding' 
-  | 'dashboard' 
-  | 'map' 
-  | 'report' 
-  | 'community' 
+export type ScreenName =
+  | 'login'
+  | 'onboarding'
+  | 'dashboard'
+  | 'map'
+  | 'report'
+  | 'community'
   | 'profile'
   | 'petDetail'
   | 'aiMatch'
@@ -59,12 +59,14 @@ export function DesktopNav({ activeTab, onNavigate }: BottomNavProps) {
           return (
             <button
               key={item.id}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
               onClick={() => onNavigate(item.id)}
               className={cn(
                 'flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors',
                 isActive
                   ? 'bg-primary text-white shadow-sm'
-                  : 'text-muted-foreground hover:bg-secondary hover:text-paws-dark'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-paws-dark',
               )}
             >
               <Icon className="h-5 w-5" />
@@ -89,6 +91,8 @@ export function BottomNav({ activeTab, onNavigate }: BottomNavProps) {
             return (
               <button
                 key={item.id}
+                aria-label={item.label}
+                aria-current={isActive ? 'page' : undefined}
                 onClick={() => onNavigate(item.id)}
                 className="relative -top-4 w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 transition-transform hover:scale-105 active:scale-95"
               >
@@ -100,27 +104,34 @@ export function BottomNav({ activeTab, onNavigate }: BottomNavProps) {
           return (
             <button
               key={item.id}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
               onClick={() => onNavigate(item.id)}
               className={cn(
-                "flex flex-col items-center justify-center py-2 px-4 transition-all",
-                isActive && "scale-105"
+                'flex flex-col items-center justify-center py-2 px-4 transition-all',
+                isActive && 'scale-105',
               )}
             >
-              <div className={cn(
-                "relative",
-                isActive && "after:absolute after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-primary after:rounded-full"
-              )}>
-                <Icon 
+              <div
+                className={cn(
+                  'relative',
+                  isActive &&
+                    'after:absolute after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-primary after:rounded-full',
+                )}
+              >
+                <Icon
                   className={cn(
-                    "w-6 h-6 transition-colors",
-                    isActive ? "text-primary" : "text-muted-foreground"
-                  )} 
+                    'w-6 h-6 transition-colors',
+                    isActive ? 'text-primary' : 'text-muted-foreground',
+                  )}
                 />
               </div>
-              <span className={cn(
-                "text-xs mt-1 transition-colors",
-                isActive ? "text-primary font-medium" : "text-muted-foreground"
-              )}>
+              <span
+                className={cn(
+                  'text-xs mt-1 transition-colors',
+                  isActive ? 'text-primary font-medium' : 'text-muted-foreground',
+                )}
+              >
                 {item.label}
               </span>
             </button>

@@ -4,26 +4,25 @@ import { useState, useEffect } from 'react'
 import { Search, ChevronUp, MapPin, Clock, LocateFixed } from 'lucide-react'
 import { useApp } from '@/lib/app-context'
 import type { ScreenName } from '@/components/bottom-nav'
-import { costaRicaLocations, findCanton, findDistrict, findProvince } from '@/lib/costa-rica-locations'
+import {
+  costaRicaLocations,
+  findCanton,
+  findDistrict,
+  findProvince,
+} from '@/lib/costa-rica-locations'
 import dynamic from 'next/dynamic'
 
 // Dynamically import Leaflet components to avoid SSR issues
-const MapContainer = dynamic(
-  () => import('react-leaflet').then((mod) => mod.MapContainer),
-  { ssr: false }
-)
-const TileLayer = dynamic(
-  () => import('react-leaflet').then((mod) => mod.TileLayer),
-  { ssr: false }
-)
-const CircleMarker = dynamic(
-  () => import('react-leaflet').then((mod) => mod.CircleMarker),
-  { ssr: false }
-)
-const Popup = dynamic(
-  () => import('react-leaflet').then((mod) => mod.Popup),
-  { ssr: false }
-)
+const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
+  ssr: false,
+})
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), {
+  ssr: false,
+})
+const CircleMarker = dynamic(() => import('react-leaflet').then((mod) => mod.CircleMarker), {
+  ssr: false,
+})
+const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false })
 
 interface MapScreenProps {
   onNavigate: (screen: ScreenName, data?: Record<string, unknown>) => void
@@ -65,7 +64,8 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
     ? [userLocation.lat, userLocation.lng]
     : [9.9281, -84.0907]
   const selectedProvinceOption = selectedProvince ? findProvince(selectedProvince) : null
-  const selectedCantonOption = selectedProvince && selectedCanton ? findCanton(selectedProvince, selectedCanton) : null
+  const selectedCantonOption =
+    selectedProvince && selectedCanton ? findCanton(selectedProvince, selectedCanton) : null
 
   const activeFilter: FilterType =
     statusFilter === 'lost'
@@ -162,7 +162,7 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
                 }}
               />
             )}
-            
+
             {/* Pet Markers */}
             {filteredPets.map((pet) => (
               <CircleMarker
@@ -187,11 +187,11 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
                     <p className="text-sm text-muted-foreground mb-2">{pet.breed}</p>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
                       <Clock className="w-3 h-3" />
-                      <span>Vista {pet.lastSeen}</span>
+                      <span>Reportado: {pet.reportedAt}</span>
                       <span className="mx-1">·</span>
-                      <span>{pet.distance}</span>
+                      <span>{pet.location}</span>
                     </div>
-                    <button 
+                    <button
                       onClick={() => onNavigate('petDetail', { petId: pet.id })}
                       className="w-full py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-paws-primary-dark transition-colors"
                     >
@@ -207,7 +207,7 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
 
       {/* Search Bar Overlay */}
       <div className="absolute top-12 left-4 right-4 z-10 md:left-6 md:right-auto md:top-6 md:w-[420px]">
-        <button 
+        <button
           onClick={() => onNavigate('search')}
           className="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-lg text-muted-foreground"
         >
@@ -301,13 +301,14 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
       </div>
 
       {/* Bottom Sheet */}
-      <div 
+      <div
         className={`absolute bottom-16 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-10 transition-transform duration-300 md:bottom-6 md:left-auto md:right-6 md:w-[390px] md:rounded-2xl ${
           isBottomSheetOpen ? 'translate-y-0' : 'translate-y-[calc(100%-60px)]'
         }`}
       >
         {/* Handle */}
-        <button 
+        <button
+          aria-label="Mostrar u ocultar lista de reportes"
           onClick={() => setIsBottomSheetOpen(!isBottomSheetOpen)}
           className="w-full py-3 flex justify-center"
         >
@@ -316,35 +317,40 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
 
         <div className="px-4 pb-6 max-h-[300px] overflow-y-auto md:max-h-[calc(100vh-180px)]">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-paws-dark">Avistamientos cercanos</h3>
+            <h3 className="font-semibold text-paws-dark">Reportes en esta zona</h3>
             <button onClick={() => setIsBottomSheetOpen(!isBottomSheetOpen)}>
-              <ChevronUp className={`w-5 h-5 text-muted-foreground transition-transform ${isBottomSheetOpen ? '' : 'rotate-180'}`} />
+              <ChevronUp
+                className={`w-5 h-5 text-muted-foreground transition-transform ${isBottomSheetOpen ? '' : 'rotate-180'}`}
+              />
             </button>
           </div>
 
           <div className="space-y-3">
+            {!nearbySightings.length && (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                No hay reportes con estos filtros. Amplía el radio o cambia la búsqueda.
+              </p>
+            )}
             {nearbySightings.map((pet) => (
               <button
                 key={pet.id}
                 onClick={() => onNavigate('petDetail', { petId: pet.id })}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-colors ${statusStyles[pet.status].card}`}
               >
-                <img
-                  src={pet.image}
-                  alt={pet.name}
-                  className="w-12 h-12 rounded-xl object-cover"
-                />
+                <img src={pet.image} alt={pet.name} className="w-12 h-12 rounded-xl object-cover" />
                 <div className="flex-1">
                   <p className="font-medium text-paws-dark">{pet.name}</p>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Clock className="w-3 h-3" />
-                    <span>{pet.lastSeen}</span>
+                    <span>{pet.reportedAt}</span>
                     <span className="mx-1">·</span>
                     <MapPin className="w-3 h-3" />
-                    <span>{pet.distance}</span>
+                    <span>{pet.location}</span>
                   </div>
                 </div>
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyles[pet.status].badge}`}>
+                <span
+                  className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyles[pet.status].badge}`}
+                >
                   {statusStyles[pet.status].label}
                 </span>
               </button>

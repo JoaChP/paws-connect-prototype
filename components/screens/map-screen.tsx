@@ -16,9 +16,7 @@ import dynamic from 'next/dynamic'
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
   ssr: false,
 })
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), {
-  ssr: false,
-})
+const VectorMapLayer = dynamic(() => import('@/components/vector-map-layer'), { ssr: false })
 const CircleMarker = dynamic(() => import('react-leaflet').then((mod) => mod.CircleMarker), {
   ssr: false,
 })
@@ -144,11 +142,15 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
             zoom={13}
             className="h-full w-full z-0"
             zoomControl={false}
+            minZoom={2}
+            maxZoom={19}
+            maxBounds={[
+              [-85, -Infinity],
+              [85, Infinity],
+            ]}
+            maxBoundsViscosity={1}
           >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <VectorMapLayer />
 
             {userLocation && (
               <CircleMarker
@@ -170,7 +172,12 @@ export function MapScreen({ onNavigate }: MapScreenProps) {
                 center={[pet.lat, pet.lng]}
                 radius={12}
                 pathOptions={{
-                  fillColor: pet.status === 'lost' ? '#EF4444' : '#22C55E',
+                  fillColor:
+                    pet.status === 'lost'
+                      ? '#EF4444'
+                      : pet.status === 'shelter'
+                        ? '#3B82F6'
+                        : '#22C55E',
                   color: '#FFFFFF',
                   weight: 3,
                   fillOpacity: 1,

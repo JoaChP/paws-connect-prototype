@@ -21,9 +21,7 @@ const MapPicker = dynamic(() => import('@/components/map-picker'), { ssr: false 
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
   ssr: false,
 })
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), {
-  ssr: false,
-})
+const VectorMapLayer = dynamic(() => import('@/components/vector-map-layer'), { ssr: false })
 const CircleMarker = dynamic(() => import('react-leaflet').then((mod) => mod.CircleMarker), {
   ssr: false,
 })
@@ -487,11 +485,15 @@ export function ReportScreen({ onNavigate, onBack, petId }: ReportScreenProps) {
                 zoom={14}
                 className="h-full w-full"
                 zoomControl={false}
+                minZoom={2}
+                maxZoom={19}
+                maxBounds={[
+                  [-85, -Infinity],
+                  [85, Infinity],
+                ]}
+                maxBoundsViscosity={1}
               >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+                <VectorMapLayer />
                 <CircleMarker center={markerPosition} radius={9} />
                 <MapPicker onPick={applyManualLocation} />
               </MapContainer>

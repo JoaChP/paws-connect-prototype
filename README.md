@@ -20,7 +20,7 @@ Aplicación full stack para reunir mascotas con sus familias en Costa Rica. Perm
 
 ## Tecnologías
 
-Next.js 16 · React 19 · TypeScript estricto · Tailwind CSS 4 · Radix UI · Leaflet/OpenStreetMap · PostgreSQL en Neon · Zod · Node.js `crypto` · Vercel.
+Next.js 16 · React 19 · TypeScript estricto · Tailwind CSS 4 · Radix UI · MapLibre GL · OpenFreeMap · Leaflet · PostgreSQL en Neon · Zod · Node.js `crypto` · Vercel.
 
 ## Arquitectura
 
@@ -107,7 +107,7 @@ La base no se modifica durante `next build`. La integración de Neon puede crear
 - El registro actual usa correo y contraseña. No incluye verificación de correo, recuperación por correo, OAuth ni mensajería privada; la interfaz no ofrece esas funciones como si existieran.
 - Las fotos se reducen a un máximo de 900 píxeles y 500 KB de representación antes de guardarse en PostgreSQL. Es una decisión para el alcance de portafolio; para más volumen conviene migrar fotos a almacenamiento de objetos y añadir paginación. El listado actual muestra hasta 200 reportes recientes y 100 publicaciones/mensajes por consulta.
 - Los selectores territoriales dan una referencia aproximada. Se puede ajustar el punto directamente en el mapa.
-- La demo utiliza fotografías de Unsplash y registros ficticios. Los mapas usan OpenStreetMap y mantienen su atribución.
+- La demo utiliza fotografías de Unsplash y registros ficticios. Los mapas vectoriales usan OpenFreeMap (estilo Liberty) con MapLibre GL y conservan la atribución de OpenFreeMap, OpenMapTiles y OpenStreetMap. No requieren API key ni facturación. Los dispositivos sin WebGL utilizan el mapa raster de OpenStreetMap como respaldo.
 
 ## Para el CV
 
